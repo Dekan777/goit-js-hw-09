@@ -40,13 +40,24 @@ const options = {
 function handleSelectedDate(dates) {
     if (dates.getTime() > date.getTime()) {
         refs.button.disabled = false;
+        const timeDifference = convertMs(dates.getTime());
         console.log(dates);
+        refs.button.addEventListener('click', function () {
+            if (!refs.button.disabled) {
+                const timeDifference = dates.getTime() - date.getTime();
+                console.log(timeDifference);
+                console.log(convertMs(timeDifference));
+                
+            }
+        });
         Notify.success('Вate entered correctly');
       } else {
         // window.alert("Please choose a date in the future.");
         Notify.failure('Please choose a date in the future.');
       }
   }
+  
+  
 
   
 
