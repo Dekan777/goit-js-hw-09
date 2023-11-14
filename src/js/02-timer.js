@@ -1,6 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-import "flatpickr/dist/flatpickr.min.css";
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 
 const refs = {
@@ -18,7 +18,9 @@ const refs = {
 
   let selectedDate;
   const date = new Date();
-  
+  refs.button.disabled = true;
+
+
 const options = {
     enableTime: true, //Включает выбор времени
     time_24hr: true, //Отображает выбор времени в 24-часовом режиме
@@ -36,10 +38,13 @@ const options = {
 
 
 function handleSelectedDate(dates) {
-    if (dates.getTime() < date.getTime()) {
+    if (dates.getTime() > date.getTime()) {
+        refs.button.disabled = false;
         console.log(dates);
+        Notify.success('Вate entered correctly');
       } else {
-        window.alert("Please choose a date in the future.");
+        // window.alert("Please choose a date in the future.");
+        Notify.failure('Please choose a date in the future.');
       }
   }
 
