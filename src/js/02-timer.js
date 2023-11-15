@@ -46,7 +46,8 @@ function handleSelectedDate(dates) {
 
 refs.button.addEventListener('click', function () {
   if (!refs.button.disabled) {
-    
+    const initialTimeDifference = selectedDate.getTime() - Date.now();
+    updateTimer(initialTimeDifference);
     startTimer();
     refs.button.disabled = true;
   }
