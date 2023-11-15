@@ -1,117 +1,104 @@
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
+let timerInterval;
+let selectedDate;
+const date = new Date();
+refs.button.disabled = true;
 
 const refs = {
-    input: document.querySelector('#datetime-picker'),
-    button: document.querySelector('button[data-start]'),
-    timer: document.querySelector('.timer'),
-    field: document.querySelector('.field'),
-    label: document.querySelector('.label'),
+  input: document.querySelector('#datetime-picker'),
+  button: document.querySelector('button[data-start]'),
 
-    dataDays: document.querySelector('.value[data-days]'),
-    dataHours: document.querySelector('.value[data-hours]'),
-    dataMinutes: document.querySelector('.value[data-minutes]'),
-    dataSeconds: document.querySelector('.value[data-seconds]'),
-  };
+  dataDays: document.querySelector('.value[data-days]'),
+  dataHours: document.querySelector('.value[data-hours]'),
+  dataMinutes: document.querySelector('.value[data-minutes]'),
+  dataSeconds: document.querySelector('.value[data-seconds]'),
 
-
-  let timerInterval;
-  let selectedDate;
-  const date = new Date();
-  refs.button.disabled = true;
-
+  timer: document.querySelector('.timer'),
+  field: document.querySelector('.field'),
+  label: document.querySelector('.label'),
+};
 
 const options = {
-    enableTime: true, 
-    time_24hr: true, 
-    defaultDate: new Date(), 
-    minuteIncrement: 1, 
-    onClose(selectedDates) {
-   
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+
+  onClose(selectedDates) {
     selectedDate = selectedDates[0];
     handleSelectedDate(selectedDate);
-    },
-  };
-  
-  flatpickr(refs.input, options);
+  },
+};
 
-  function handleSelectedDate(dates) {
-    if (dates.getTime() > date.getTime()) {
-      refs.button.disabled = false;
-    } else {
-      Notify.failure('Please choose a date in the future.');
-    }
+flatpickr(refs.input, options);
+
+function handleSelectedDate(dates) {
+  if (dates.getTime() > date.getTime()) {
+    refs.button.disabled = false;
+  } else {
+    Notify.failure('Please choose a date in the future.');
   }
+}
 
-
-  refs.button.addEventListener('click', function () {
-    if (!refs.button.disabled) {
-      startTimer();
-      Notify.success('Date entered correctly');
-    }
-  });
-
-  function startTimer() {
-    timerInterval = setInterval(function () {
-      const currentTime = new Date();
-      const timeDifference = selectedDate.getTime() - currentTime.getTime();
-      const nonNegativeTimeDifference = timeDifference < 0 ? 0 : timeDifference;
-      console.log(nonNegativeTimeDifference);
-      console.log("selectedDate", selectedDate.getTime());
-      console.log("currentTime", currentTime.getTime());
-      
-      updateTimer(nonNegativeTimeDifference);
-    }, 1000);
+refs.button.addEventListener('click', function () {
+  if (!refs.button.disabled) {
+    startTimer();
+    Notify.success('Date entered correctly');
   }
+});
 
-  function updateTimer(ms) {
-    const { days, hours, minutes, seconds } = convertMs(ms);
-    console.log(days, hours, minutes, seconds);
+function startTimer() {
+  timerInterval = setInterval(function () {
+    const currentTime = new Date();
+    const timeDifference = selectedDate.getTime() - currentTime.getTime();
+    const nonNegativeTimeDifference = timeDifference < 0 ? 0 : timeDifference; // проверка
+    updateTimer(nonNegativeTimeDifference);
+  }, 1000);
+}
 
-    // Обновляем интерфейс таймера
-    refs.dataDays.textContent = formatTimeValue(days);
-    refs.dataHours.textContent = formatTimeValue(hours);
-    refs.dataMinutes.textContent = formatTimeValue(minutes);
-    refs.dataSeconds.textContent = formatTimeValue(seconds);
+function updateTimer(ms) {
+  const { days, hours, minutes, seconds } = convertMs(ms);
+  console.log(days, hours, minutes, seconds);
 
-    // Если достигнута конечная дата, останавливаем таймер
-    if (ms <= 0) {
-      clearInterval(timerInterval);
-      refs.button.disabled = true;
-    }
+  // Обновляем интерфейс таймера
+  refs.dataDays.textContent = formatTimeValue(days);
+  refs.dataHours.textContent = formatTimeValue(hours);
+  refs.dataMinutes.textContent = formatTimeValue(minutes);
+  refs.dataSeconds.textContent = formatTimeValue(seconds);
+
+  // Если достигнута конечная дата, останавливаем таймер
+  if (ms <= 0) {
+    clearInterval(timerInterval);
+    refs.button.disabled = true;
   }
+}
 
-  function formatTimeValue(value) {
-    return value < 10 ? `0${value}` : value;
-  }
+function formatTimeValue(value) {
+  return value < 10 ? `0${value}` : value;
+}
 
+function convertMs(ms) {
+  // Number of milliseconds per unit of time
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
 
+  // Remaining days
+  const days = Math.floor(ms / day);
+  // Remaining hours
+  const hours = Math.floor((ms % day) / hour);
+  // Remaining minutes
+  const minutes = Math.floor(((ms % day) % hour) / minute);
+  // Remaining seconds
+  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
+  return { days, hours, minutes, seconds };
+}
 
-  function convertMs(ms) {
-    // Number of milliseconds per unit of time
-    const second = 1000;
-    const minute = second * 60;
-    const hour = minute * 60;
-    const day = hour * 24;
-  
-    // Remaining days
-    const days = Math.floor(ms / day);
-    // Remaining hours
-    const hours = Math.floor((ms % day) / hour);
-    // Remaining minutes
-    const minutes = Math.floor(((ms % day) % hour) / minute);
-    // Remaining seconds
-    const seconds = Math.floor((((ms % day) % hour) % minute) / second);
-  
-    return { days, hours, minutes, seconds };
-  }
-  
-  console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-  console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-  console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
-
-
-  
+console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
+console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
+console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
