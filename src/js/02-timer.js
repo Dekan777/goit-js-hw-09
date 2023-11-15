@@ -11,9 +11,9 @@ const refs = {
   dataMinutes: document.querySelector('.value[data-minutes]'),
   dataSeconds: document.querySelector('.value[data-seconds]'),
 
-  timer: document.querySelector('.timer'),
-  field: document.querySelector('.field'),
-  label: document.querySelector('.label'),
+  //   timer: document.querySelector('.timer'),
+  //   field: document.querySelector('.field'),
+  //   label: document.querySelector('.label'),
 };
 
 let timerInterval;
@@ -38,6 +38,7 @@ flatpickr(refs.input, options);
 function handleSelectedDate(dates) {
   if (dates.getTime() > date) {
     refs.button.disabled = false;
+    Notify.success('Date entered correctly');
   } else {
     Notify.failure('Please choose a date in the future.');
   }
@@ -45,17 +46,17 @@ function handleSelectedDate(dates) {
 
 refs.button.addEventListener('click', function () {
   if (!refs.button.disabled) {
+    
     startTimer();
-    Notify.success('Date entered correctly');
     refs.button.disabled = true;
   }
 });
 
 function startTimer() {
   timerInterval = setInterval(function () {
-    const currentTime = Date.now();
-    const timeDifference = selectedDate.getTime() - currentTime;
+    const timeDifference = selectedDate.getTime() - Date.now();
     const nonNegativeTimeDifference = timeDifference < 0 ? 0 : timeDifference; // проверка
+    
     updateTimer(nonNegativeTimeDifference);
   }, 1000);
 }
@@ -81,8 +82,6 @@ function formatTimeValue(value) {
   return value < 10 ? `0${value}` : value;
 }
 
-
-
 function convertMs(ms) {
   // Number of milliseconds per unit of time
   const second = 1000;
@@ -101,5 +100,3 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-
-
