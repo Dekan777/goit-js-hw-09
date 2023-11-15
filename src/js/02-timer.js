@@ -18,7 +18,7 @@ const refs = {
 
 let timerInterval;
 let selectedDate;
-const date = new Date();
+const date = Date.now();
 refs.button.disabled = true;
 
 const options = {
@@ -36,7 +36,7 @@ const options = {
 flatpickr(refs.input, options);
 
 function handleSelectedDate(dates) {
-  if (dates.getTime() > date.getTime()) {
+  if (dates.getTime() > date) {
     refs.button.disabled = false;
   } else {
     Notify.failure('Please choose a date in the future.');
@@ -53,8 +53,8 @@ refs.button.addEventListener('click', function () {
 
 function startTimer() {
   timerInterval = setInterval(function () {
-    const currentTime = new Date();
-    const timeDifference = selectedDate.getTime() - currentTime.getTime();
+    const currentTime = Date.now();
+    const timeDifference = selectedDate.getTime() - currentTime;
     const nonNegativeTimeDifference = timeDifference < 0 ? 0 : timeDifference; // проверка
     updateTimer(nonNegativeTimeDifference);
   }, 1000);
