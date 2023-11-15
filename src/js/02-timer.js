@@ -4,7 +4,7 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 
 const refs = {
-    input: document.querySelector('#datetime-picker'),//
+    input: document.querySelector('#datetime-picker'),
     button: document.querySelector('button[data-start]'),
     timer: document.querySelector('.timer'),
     field: document.querySelector('.field'),
@@ -16,50 +16,76 @@ const refs = {
     dataSeconds: document.querySelector('.value[data-seconds]'),
   };
 
+
+  let timerInterval;
   let selectedDate;
   const date = new Date();
   refs.button.disabled = true;
 
 
 const options = {
-    enableTime: true, //Включает выбор времени
-    time_24hr: true, //Отображает выбор времени в 24-часовом режиме
-    defaultDate: new Date(), //Устанавливает начальную выбранную дату
-    minuteIncrement: 1, //Регулирует шаг ввода минут (включая прокрутку)
+    enableTime: true, 
+    time_24hr: true, 
+    defaultDate: new Date(), 
+    minuteIncrement: 1, 
     onClose(selectedDates) {
-    //   console.log(selectedDates[0]); //закрытии календаря активируется функция.
+   
     selectedDate = selectedDates[0];
     handleSelectedDate(selectedDate);
     },
-    
   };
   
   flatpickr(refs.input, options);
 
-
-function handleSelectedDate(dates) {
+  function handleSelectedDate(dates) {
     if (dates.getTime() > date.getTime()) {
-        refs.button.disabled = false;
-        const timeDifference = convertMs(dates.getTime());
-        console.log(dates);
-        refs.button.addEventListener('click', function () {
-            if (!refs.button.disabled) {
-                const timeDifference = dates.getTime() - date.getTime();
-                console.log(timeDifference);
-                console.log(convertMs(timeDifference));
-                
-            }
-        });
-        Notify.success('Вate entered correctly');
-      } else {
-        // window.alert("Please choose a date in the future.");
-        Notify.failure('Please choose a date in the future.');
-      }
+      refs.button.disabled = false;
+    } else {
+      Notify.failure('Please choose a date in the future.');
+    }
   }
-  
-  
 
-  
+
+  refs.button.addEventListener('click', function () {
+    if (!refs.button.disabled) {
+      startTimer();
+      Notify.success('Date entered correctly');
+    }
+  });
+
+  function startTimer() {
+    timerInterval = setInterval(function () {
+      const currentTime = new Date();
+      const timeDifference = selectedDate.getTime() - currentTime.getTime();
+      const nonNegativeTimeDifference = timeDifference < 0 ? 0 : timeDifference;
+      console.log(nonNegativeTimeDifference);
+      console.log("selectedDate", selectedDate.getTime());
+      console.log("currentTime", currentTime.getTime());
+      
+      updateTimer(nonNegativeTimeDifference);
+    }, 1000);
+  }
+
+  function updateTimer(ms) {
+    const { days, hours, minutes, seconds } = convertMs(ms);
+    console.log(days, hours, minutes, seconds);
+
+    // Обновляем интерфейс таймера
+    refs.dataDays.textContent = formatTimeValue(days);
+    refs.dataHours.textContent = formatTimeValue(hours);
+    refs.dataMinutes.textContent = formatTimeValue(minutes);
+    refs.dataSeconds.textContent = formatTimeValue(seconds);
+
+    // Если достигнута конечная дата, останавливаем таймер
+    if (ms <= 0) {
+      clearInterval(timerInterval);
+      refs.button.disabled = true;
+    }
+  }
+
+  function formatTimeValue(value) {
+    return value < 10 ? `0${value}` : value;
+  }
 
 
 
@@ -83,9 +109,9 @@ function handleSelectedDate(dates) {
     return { days, hours, minutes, seconds };
   }
   
-//   console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-//   console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-//   console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
+  console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
+  console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
+  console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
 
 
   
