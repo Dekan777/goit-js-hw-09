@@ -5,41 +5,34 @@ const amountInput = document.querySelector('input[name="amount"]');
 const delayInput = document.querySelector('input[name="delay"]');
 const stepInput = document.querySelector('input[name="step"]');
 
-
-
-  form.addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const amount = parseInt(amountInput.value); 
-    const step = parseInt(stepInput.value); 
-    let delay = parseInt(delayInput.value);
+form.addEventListener('submit', function (event) {
+  event.preventDefault();
   
-    for (let i = 0; i < amount; i++) {
-      setTimeout(() => {
-        createPromise(i, delay);
-        delay += step;
-      }, delay * i);
-    }
-  });
+  const amount = parseInt(amountInput.value);
+  const step = parseInt(stepInput.value);
+  let delay = parseInt(delayInput.value);
 
-
+  for (let i = 0; i < amount; i++) {
+    setTimeout(() => {
+      createPromise(i, delay);
+      delay += step;
+    }, delay * i);
+  }
+});
 
 function createPromise(position, delay) {
-  return new Promise((resolve, reject) => {
+  
     setTimeout(() => {
       const shouldResolve = Math.random() > 0.3;
 
       if (shouldResolve) {
         Notify.success(`Fulfilled promise ${position} in ${delay}ms`);
-       
       } else {
         Notify.failure(`Rejected promise ${position} in ${delay}ms`);
-        
       }
-    }, delay);
-  });
+    });
+  
 }
-
 
 // createPromise(2, 1500)
 //   .then(({ position, delay }) => {
@@ -48,3 +41,12 @@ function createPromise(position, delay) {
 //   .catch(({ position, delay }) => {
 //     console.log(`❌ Rejected promise ${position} in ${delay}ms`);
 //   });
+
+// function createPromise(position, delay) {
+//   const shouldResolve = Math.random() > 0.3;
+//   if (shouldResolve) {
+//     // Fulfill
+//   } else {
+//     // Reject
+//   }
+// }
