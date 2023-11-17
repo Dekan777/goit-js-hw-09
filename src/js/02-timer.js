@@ -64,7 +64,7 @@ function startTimer() {
 
 function updateTimer(ms) {
   const { days, hours, minutes, seconds } = convertMs(ms);
-  console.log(days, hours, minutes, seconds);
+  // console.log(days, hours, minutes, seconds);
 
   // Обновляем интерфейс таймера
   refs.dataDays.textContent = formatTimeValue(days);

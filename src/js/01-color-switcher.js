@@ -6,11 +6,13 @@ const refs = {
 
 let colorRandom;
 let isThemeChanging = false;
+refs.stopBtn.disabled = true;
 
 refs.startBtn.addEventListener('click', function () {
   if (!isThemeChanging) {
     isThemeChanging = true;
     refs.startBtn.disabled = true;
+    refs.stopBtn.disabled = false;
     colorRandom = setInterval(setRandomBackgroundColor, 1000);
   }
 });
@@ -19,6 +21,7 @@ refs.stopBtn.addEventListener('click', function () {
   if (isThemeChanging) {
     isThemeChanging = false;
     refs.startBtn.disabled = false;
+    refs.stopBtn.disabled = true;
     clearInterval(colorRandom);
   }
 });
