@@ -63,11 +63,11 @@ form.addEventListener('submit', function (event) {
       }, delay);
     });
   }
-  Promise.all(promises)
+  Promise.race(promises)
     .then(results => {
-      console.log('All promises resolved:', results);
+      console.log('Returning one promise:', results);
     })
     .catch(errors => {
-      console.error('At least one promise was rejected:', errors);
+      console.error('One promise rejected:', errors);
     });
 });
