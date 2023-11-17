@@ -60,7 +60,7 @@ form.addEventListener('submit', function (event) {
           Notify.failure(`Rejected promise ${position} in ${delay}ms`);
           reject({ position, delay });
         }
-      }, );
+      }, delay);
     });
   }
   Promise.race(promises)
